@@ -3,195 +3,252 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#284b3c">
-  <meta name="description" content="BirlikteBul ile becerilerini paylaş, yeni beceriler öğren ve birlikte geliş.">
-  <title>BirlikteBul — Beceriler paylaştıkça çoğalır</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#174f3b">
+  <meta name="description" content="BirlikteBul — Bilgini paylaş, yeni beceriler öğren.">
+  <title>BirlikteBul | Bilgi Paylaşım Platformu</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#" aria-label="BirlikteBul ana sayfa">
-      <span class="brand-icon">b.</span>
-      birlikte<span class="brand-muted">bul</span>
+    <a class="brand" href="#" data-page="home">
+      <span class="brand-icon">B</span>
+      <span>birlikte<span class="brand-light">bul</span></span>
     </a>
-    <nav>
-      <a href="#kesfet">Keşfet</a>
-      <a href="#nasil">Nasıl çalışır?</a>
+
+    <nav class="main-nav" aria-label="Ana menü">
+      <button class="nav-link active" data-page="home">Keşfet</button>
+      <button class="nav-link" data-page="skills">Beceri ilanları</button>
+      <button class="nav-link" data-page="requests">Öğrenme talepleri</button>
     </nav>
+
     <div class="header-actions">
-      <span id="user-label" class="user-label hidden"></span>
-      <button id="login-open" class="btn btn-light">Giriş yap</button>
-      <button id="signup-open" class="btn btn-primary">Hemen katıl ↗</button>
-      <button id="logout" class="btn btn-light hidden">Çıkış</button>
+      <button class="btn btn-outline" id="loginBtn">Giriş yap</button>
+      <button class="btn btn-primary" id="signupBtn">Ücretsiz katıl</button>
+      <button class="profile-menu hidden" id="profileMenu" aria-label="Kişisel sayfam">
+        <img id="headerAvatar" src="" alt="">
+        <span id="headerName">Hesabım</span>
+        <span aria-hidden="true">⌄</span>
+      </button>
     </div>
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero" id="heroSection">
       <div class="hero-copy">
-        <div class="eyebrow">✳ BİLGİ PAYLAŞTIKÇA ÇOĞALIR</div>
-        <h1>Bildiklerin,<br><em>başkasının</em> başlangıcı.</h1>
-        <p class="lead">
-          Bir becerini paylaş, yeni bir şey öğren. Birlikte daha fazlasını
-          yapabileceğin insanları keşfet.
-        </p>
+        <span class="eyebrow">BİLGİNİ PAYLAŞ · BİRLİKTE GELİŞ</span>
+        <h1>Öğrenmenin en güzel yolu <span>birlikte.</span></h1>
+        <p>Bildiklerini paylaş, yeni beceriler keşfet ve seninle aynı ilgi alanlarına sahip insanlarla tanış.</p>
         <div class="hero-actions">
-          <a href="#kesfet" class="btn btn-primary btn-large">İnsanları keşfet ↗</a>
-          <button id="join" class="btn btn-outline btn-large">Topluluğa katıl</button>
+          <button class="btn btn-primary btn-large" id="heroExplore">Becerileri keşfet <span>→</span></button>
+          <button class="btn btn-outline btn-large" id="heroAddSkill">Bir beceri paylaş</button>
         </div>
-        <p class="subtle">Öğrenmeye ve öğretmeye açık insanlar için.</p>
+        <div class="hero-note"><span class="dot"></span> Bilgi paylaşımıyla büyüyen bir topluluk</div>
       </div>
       <div class="hero-art" aria-hidden="true">
-        <div class="orbit"></div>
-        <div class="hero-orb">
-          <span>✳</span><small>birlikte</small><b>öğreniyoruz</b>
+        <div class="art-circle circle-one"></div>
+        <div class="art-circle circle-two"></div>
+        <div class="art-card art-card-main">
+          <div class="art-emoji">✦</div>
+          <strong>Birlikte öğren</strong>
+          <span>Her beceri yeni bir başlangıç.</span>
         </div>
-        <div class="float-card float-one">✳ <span><b>Becerini paylaş</b><small>Deneyimini aktar</small></span></div>
-        <div class="float-card float-two">↗ <span><b>Yeni şeyler keşfet</b><small>Birlikte geliş</small></span></div>
+        <div class="art-card art-card-small art-card-top">🎨 <span>Tasarım</span></div>
+        <div class="art-card art-card-small art-card-bottom">💻 <span>Yazılım</span></div>
       </div>
     </section>
 
-    <section id="kesfet" class="section">
+    <section class="page-section" id="homePage">
       <div class="section-heading">
         <div>
-          <div class="eyebrow">TOPLULUĞU TANI</div>
-          <h2>Birlikte öğrenebileceğin<br>insanları bul.</h2>
+          <span class="eyebrow">TOPLULUĞU KEŞFET</span>
+          <h2>Yeni bir şey öğren</h2>
+          <p>İlgini çeken bir beceri bul ve paylaşım yapan kişilerle tanış.</p>
         </div>
-        <button id="offer-open" class="btn btn-primary">＋ Beceri paylaş</button>
+        <button class="btn btn-primary" id="addSkillBtn">＋ Beceri ekle</button>
       </div>
 
-      <div class="search-row">
-        <input id="search" type="search" placeholder="Beceri, isim veya şehir ara…" aria-label="Beceri, isim veya şehir ara">
-        <select id="sort" aria-label="Sıralama">
-          <option value="new">En yeni</option>
-          <option value="name">İsme göre</option>
+      <div class="search-bar">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="Beceri, konu veya şehir ara..." aria-label="Beceri ara">
+        <select id="categoryFilter" aria-label="Kategori seç">
+          <option value="">Tüm kategoriler</option>
+          <option value="Yazılım">Yazılım</option>
+          <option value="Tasarım">Tasarım</option>
+          <option value="Dil">Dil</option>
+          <option value="Müzik">Müzik</option>
+          <option value="Fotoğrafçılık">Fotoğrafçılık</option>
+          <option value="El sanatları">El sanatları</option>
+          <option value="Eğitim">Eğitim</option>
+          <option value="Diğer">Diğer</option>
         </select>
       </div>
 
-      <div id="categories" class="categories" aria-label="Kategori filtreleri">
-        <button class="chip active" data-cat="Tümü">Tümü</button>
-        <button class="chip" data-cat="Yazılım">⌘ Yazılım</button>
-        <button class="chip" data-cat="Dil">文 Dil</button>
-        <button class="chip" data-cat="Tasarım">✳ Tasarım</button>
-        <button class="chip" data-cat="Müzik">♫ Müzik</button>
-        <button class="chip" data-cat="Kişisel gelişim">✦ Kişisel gelişim</button>
-        <button class="chip" data-cat="Diğer">＋ Diğer</button>
-      </div>
-
       <div class="results-meta">
-        <span id="count">Paylaşımlar yükleniyor…</span>
-        <span>● Topluluğa açık</span>
+        <h3>Öne çıkan beceriler</h3>
+        <span id="resultCount">İlanlar yükleniyor...</span>
       </div>
-      <div id="cards" class="cards"></div>
-
-      <div id="empty" class="empty hidden">
-        <div class="empty-icon">⌕</div>
-        <h3 id="empty-title">Henüz paylaşım bulunamadı</h3>
-        <p id="empty-text">İlk beceriyi sen paylaşabilirsin.</p>
-        <button id="reset" class="btn btn-outline">Filtreleri temizle</button>
+      <div id="skillsGrid" class="skills-grid">
+        <div class="empty-state">Beceriler yükleniyor...</div>
       </div>
-      <p id="notice" class="notice">Gerçek paylaşımlar Supabase üzerinden yüklenir.</p>
     </section>
 
-    <section id="nasil" class="how-section">
-      <div class="eyebrow">BASİT. SAMİMİ. BİRLİKTE.</div>
-      <h2>Paylaşmak için uzman olman gerekmez.</h2>
-      <div class="steps">
-        <article class="step">
-          <span class="step-number">01</span><div class="step-icon">✳</div>
-          <h3>Becerini ekle</h3>
-          <p>İyi olduğun ya da deneyim kazandığın bir alanı paylaş.</p>
-        </article>
-        <article class="step">
-          <span class="step-number">02</span><div class="step-icon">⌕</div>
-          <h3>İnsanları keşfet</h3>
-          <p>İlgi alanına uygun kişileri ve öğrenme fırsatlarını bul.</p>
-        </article>
-        <article class="step">
-          <span class="step-number">03</span><div class="step-icon">↗</div>
-          <h3>İletişime geç</h3>
-          <p>Bir beceri paylaşım isteği göndererek birlikte öğrenmeye başla.</p>
-        </article>
+    <section class="page-section hidden" id="skillsPage">
+      <div class="section-heading">
+        <div><span class="eyebrow">SENİN PAYLAŞIMLARIN</span><h2>Beceri ilanlarım</h2><p>Paylaştığın becerileri burada yönetebilirsin.</p></div>
+        <button class="btn btn-primary" id="myAddSkillBtn">＋ Yeni ilan</button>
+      </div>
+      <div id="mySkillsGrid" class="skills-grid"></div>
+    </section>
+
+    <section class="page-section hidden" id="requestsPage">
+      <div class="section-heading">
+        <div><span class="eyebrow">BİRLİKTE GELİŞ</span><h2>Öğrenme talepleri</h2><p>Gelen talepleri yönet, gönderdiklerinin durumunu takip et.</p></div>
+      </div>
+      <div class="request-tabs">
+        <button class="tab-button active" data-request-tab="incoming">Gelen talepler</button>
+        <button class="tab-button" data-request-tab="outgoing">Gönderdiklerim</button>
+      </div>
+      <div id="requestsList" class="request-list"></div>
+    </section>
+
+    <section class="page-section hidden" id="profilePage">
+      <div class="section-heading">
+        <div><span class="eyebrow">KİŞİSEL ALANIN</span><h2>Hesabım</h2><p>Profilini ve hesap ayarlarını tek yerden yönet.</p></div>
+      </div>
+
+      <div class="dashboard-layout">
+        <aside class="dashboard-sidebar">
+          <div class="dashboard-user">
+            <img id="sidebarAvatar" src="" alt="Profil fotoğrafı">
+            <strong id="sidebarName">Kullanıcı</strong>
+            <span id="sidebarEmail" class="muted"></span>
+          </div>
+          <button class="dashboard-link active" data-settings-tab="profile">◉　Kişisel bilgiler</button>
+          <button class="dashboard-link" data-settings-tab="security">♧　E-posta ve şifre</button>
+          <button class="dashboard-link" data-settings-tab="my-skills">▤　Beceri ilanlarım</button>
+          <button class="dashboard-link" data-settings-tab="my-requests">↗　Öğrenme taleplerim</button>
+          <button class="dashboard-link danger-text" id="logoutBtn">↪　Çıkış yap</button>
+        </aside>
+
+        <div class="dashboard-content">
+          <section class="settings-panel" id="profileSettings">
+            <h3>Kişisel bilgiler</h3>
+            <p class="muted">Diğer kullanıcıların seni tanımasına yardımcı ol.</p>
+
+            <div class="avatar-editor">
+              <img id="settingsAvatar" src="" alt="Profil fotoğrafın">
+              <div>
+                <strong>Profil fotoğrafı</strong>
+                <p class="muted">JPG, PNG veya WebP. En fazla 3 MB.</p>
+                <label class="btn btn-outline file-button">
+                  Fotoğraf seç
+                  <input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp">
+                </label>
+              </div>
+            </div>
+
+            <form id="profileForm" class="form-stack">
+              <label>Görünen ad<input id="displayName" type="text" maxlength="60" required placeholder="Adın veya kullanıcı adın"></label>
+              <label>Şehir<input id="cityInput" type="text" maxlength="80" placeholder="Örn. Lefkoşa"></label>
+              <label>Hakkımda<textarea id="bioInput" rows="4" maxlength="500" placeholder="Kendinden, ilgi alanlarından ve paylaşmak istediklerinden bahset."></textarea></label>
+              <button class="btn btn-primary" type="submit">Değişiklikleri kaydet</button>
+            </form>
+          </section>
+
+          <section class="settings-panel hidden" id="securitySettings">
+            <h3>Hesap güvenliği</h3>
+            <p class="muted">E-posta ve şifre bilgilerini buradan güncelleyebilirsin.</p>
+            <form id="emailForm" class="form-stack">
+              <label>Mevcut e-posta<input id="currentEmail" type="email" disabled></label>
+              <label>Yeni e-posta<input id="newEmail" type="email" required placeholder="yeni@ornek.com"></label>
+              <button class="btn btn-primary" type="submit">E-postayı güncelle</button>
+              <p class="form-hint">Güvenlik nedeniyle yeni e-posta adresine onay bağlantısı gönderilebilir.</p>
+            </form>
+            <div class="form-divider"></div>
+            <form id="passwordForm" class="form-stack">
+              <label>Yeni şifre<input id="newPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="En az 8 karakter"></label>
+              <label>Yeni şifreyi tekrar gir<input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Şifreyi tekrar yaz"></label>
+              <button class="btn btn-primary" type="submit">Şifreyi değiştir</button>
+            </form>
+          </section>
+
+          <section class="settings-panel hidden" id="mySkillsSettings">
+            <h3>Beceri ilanlarım</h3>
+            <p class="muted">İlanlarını görüntüle, düzenle veya kaldır.</p>
+            <div id="dashboardSkills" class="compact-list"></div>
+            <button class="btn btn-primary" id="dashboardAddSkill">＋ Yeni beceri ekle</button>
+          </section>
+
+          <section class="settings-panel hidden" id="myRequestsSettings">
+            <h3>Öğrenme taleplerim</h3>
+            <p class="muted">Gelen ve gönderilen taleplerini takip et.</p>
+            <button class="btn btn-outline" id="openAllRequests">Talepleri görüntüle</button>
+          </section>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    <a class="brand" href="#"><span class="brand-icon">b.</span> birlikte<span class="brand-muted">bul</span></a>
-    <span>Beceriler paylaştıkça çoğalır.</span>
+  <footer class="footer">
+    <a class="brand" href="#" data-page="home"><span class="brand-icon">B</span><span>birlikte<span class="brand-light">bul</span></span></a>
+    <p>Bilgini paylaş, birlikte büyü.</p>
     <span>© <span id="year"></span> BirlikteBul</span>
   </footer>
 
-  <div id="auth-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-    <div class="backdrop" data-close="auth-modal"></div>
-    <section class="modal-panel">
-      <button class="close-btn" data-close="auth-modal" aria-label="Kapat">×</button>
-      <span class="brand-icon modal-logo">b.</span>
-      <div class="eyebrow">TOPLULUĞA KATIL</div>
-      <h2 id="auth-title">Birlikte öğrenmeye hazır mısın?</h2>
-      <div class="tabs">
-        <button id="tab-login">Giriş yap</button>
-        <button id="tab-signup" class="selected">Hesap oluştur</button>
+  <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-card">
+      <button class="modal-close" data-close="authModal" aria-label="Kapat">×</button>
+      <span class="eyebrow">BİRLİKTEBUL TOPLULUĞU</span>
+      <h2 id="authTitle">Tekrar hoş geldin</h2>
+      <p class="muted" id="authDescription">Hesabına giriş yap ve öğrenmeye devam et.</p>
+      <div class="auth-switch">
+        <button class="tab-button active" data-auth-mode="login">Giriş yap</button>
+        <button class="tab-button" data-auth-mode="signup">Kayıt ol</button>
       </div>
-      <form id="auth-form">
-        <label>E-posta
-          <input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="sen@ornek.com">
-        </label>
-        <label>Şifre
-          <input id="password" type="password" autocomplete="current-password" required minlength="8" maxlength="72" placeholder="En az 8 karakter">
-        </label>
-        <label id="name-wrap">Görünen ad
-          <input id="display-name" type="text" maxlength="40" autocomplete="nickname" placeholder="Sana nasıl hitap edelim?">
-        </label>
-        <button id="auth-submit" class="btn btn-primary btn-full">Hesap oluştur ↗</button>
-        <p id="auth-msg" class="form-message" aria-live="polite"></p>
+      <form id="authForm" class="form-stack">
+        <label class="signup-only hidden">Görünen ad<input id="authName" type="text" maxlength="60" autocomplete="name"></label>
+        <label>E-posta<input id="authEmail" type="email" required autocomplete="email" placeholder="ornek@eposta.com"></label>
+        <label>Şifre<input id="authPassword" type="password" minlength="8" required autocomplete="current-password" placeholder="En az 8 karakter"></label>
+        <button class="btn btn-primary btn-full" type="submit" id="authSubmit">Giriş yap</button>
       </form>
-    </section>
+      <button class="text-button" id="forgotPasswordBtn">Şifremi unuttum</button>
+    </div>
   </div>
 
-  <div id="offer-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="offer-title-heading">
-    <div class="backdrop" data-close="offer-modal"></div>
-    <section class="modal-panel">
-      <button class="close-btn" data-close="offer-modal" aria-label="Kapat">×</button>
-      <div class="eyebrow">BİLDİKLERİNİ PAYLAŞ</div>
-      <h2 id="offer-title-heading">Becerini toplulukla paylaş.</h2>
-      <form id="offer-form">
-        <label>Beceri başlığı
-          <input id="offer-title" maxlength="70" minlength="3" required placeholder="Örn. Başlangıç seviyesi Python">
-        </label>
+  <div class="modal hidden" id="skillModal" role="dialog" aria-modal="true" aria-labelledby="skillModalTitle">
+    <div class="modal-card modal-wide">
+      <button class="modal-close" data-close="skillModal" aria-label="Kapat">×</button>
+      <span class="eyebrow">BECERİ PAYLAŞIMI</span>
+      <h2 id="skillModalTitle">Yeni beceri ilanı</h2>
+      <p class="muted">Neyi paylaşmak istediğini anlat.</p>
+      <form id="skillForm" class="form-stack">
+        <input id="editSkillId" type="hidden">
+        <label>İlan başlığı<input id="skillTitle" type="text" maxlength="100" required placeholder="Örn. Temel web geliştirme"></label>
         <label>Kategori
-          <select id="offer-cat" required>
+          <select id="skillCategory" required>
             <option value="">Kategori seç</option>
-            <option>Yazılım</option><option>Dil</option><option>Tasarım</option>
-            <option>Müzik</option><option>Kişisel gelişim</option><option>Diğer</option>
+            <option>Yazılım</option><option>Tasarım</option><option>Dil</option>
+            <option>Müzik</option><option>Fotoğrafçılık</option><option>El sanatları</option>
+            <option>Eğitim</option><option>Diğer</option>
           </select>
         </label>
-        <label>Açıklama
-          <textarea id="offer-desc" maxlength="500" minlength="10" rows="4" required placeholder="Neler öğretebilirsin?"></textarea>
-        </label>
-        <label>Şehir (isteğe bağlı)
-          <input id="offer-city" maxlength="60" placeholder="Örn. İstanbul">
-        </label>
-        <button id="offer-submit" class="btn btn-primary btn-full">Beceriyi yayınla ↗</button>
-        <p id="offer-msg" class="form-message" aria-live="polite"></p>
+        <label>Şehir<input id="skillCity" type="text" maxlength="80" placeholder="Online ise bunu açıklamada belirtebilirsin"></label>
+        <label>Açıklama<textarea id="skillDescription" rows="5" maxlength="1500" required placeholder="Neler öğretebilirsin? Nasıl paylaşım yapmak istersin?"></textarea></label>
+        <button class="btn btn-primary btn-full" type="submit">İlanı kaydet</button>
       </form>
-    </section>
+    </div>
   </div>
 
-  <div id="profile-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Beceri ayrıntısı">
-    <div class="backdrop" data-close="profile-modal"></div>
-    <section class="modal-panel">
-      <button class="close-btn" data-close="profile-modal" aria-label="Kapat">×</button>
-      <div id="profile-detail"></div>
-    </section>
+  <div class="modal hidden" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-card modal-wide">
+      <button class="modal-close" data-close="detailModal" aria-label="Kapat">×</button>
+      <div id="skillDetail"></div>
+    </div>
   </div>
 
-  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="toastRegion" class="toast-region" aria-live="polite"></div>
 </body>
 </html>
