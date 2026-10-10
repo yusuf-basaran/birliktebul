@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#284b3c">
+  <meta name="description" content="BirlikteBul ile becerilerini paylaş, yeni beceriler öğren ve birlikte geliş.">
+  <title>BirlikteBul — Beceriler paylaştıkça çoğalır</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="BirlikteBul ana sayfa">
+      <span class="brand-icon">b.</span>
+      birlikte<span class="brand-muted">bul</span>
+    </a>
+    <nav>
+      <a href="#kesfet">Keşfet</a>
+      <a href="#nasil">Nasıl çalışır?</a>
+    </nav>
+    <div class="header-actions">
+      <span id="user-label" class="user-label hidden"></span>
+      <button id="login-open" class="btn btn-light">Giriş yap</button>
+      <button id="signup-open" class="btn btn-primary">Hemen katıl ↗</button>
+      <button id="logout" class="btn btn-light hidden">Çıkış</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">✳ BİLGİ PAYLAŞTIKÇA ÇOĞALIR</div>
+        <h1>Bildiklerin,<br><em>başkasının</em> başlangıcı.</h1>
+        <p class="lead">
+          Bir becerini paylaş, yeni bir şey öğren. Birlikte daha fazlasını
+          yapabileceğin insanları keşfet.
+        </p>
+        <div class="hero-actions">
+          <a href="#kesfet" class="btn btn-primary btn-large">İnsanları keşfet ↗</a>
+          <button id="join" class="btn btn-outline btn-large">Topluluğa katıl</button>
+        </div>
+        <p class="subtle">Öğrenmeye ve öğretmeye açık insanlar için.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit"></div>
+        <div class="hero-orb">
+          <span>✳</span><small>birlikte</small><b>öğreniyoruz</b>
+        </div>
+        <div class="float-card float-one">✳ <span><b>Becerini paylaş</b><small>Deneyimini aktar</small></span></div>
+        <div class="float-card float-two">↗ <span><b>Yeni şeyler keşfet</b><small>Birlikte geliş</small></span></div>
+      </div>
+    </section>
+
+    <section id="kesfet" class="section">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">TOPLULUĞU TANI</div>
+          <h2>Birlikte öğrenebileceğin<br>insanları bul.</h2>
+        </div>
+        <button id="offer-open" class="btn btn-primary">＋ Beceri paylaş</button>
+      </div>
+
+      <div class="search-row">
+        <input id="search" type="search" placeholder="Beceri, isim veya şehir ara…" aria-label="Beceri, isim veya şehir ara">
+        <select id="sort" aria-label="Sıralama">
+          <option value="new">En yeni</option>
+          <option value="name">İsme göre</option>
+        </select>
+      </div>
+
+      <div id="categories" class="categories" aria-label="Kategori filtreleri">
+        <button class="chip active" data-cat="Tümü">Tümü</button>
+        <button class="chip" data-cat="Yazılım">⌘ Yazılım</button>
+        <button class="chip" data-cat="Dil">文 Dil</button>
+        <button class="chip" data-cat="Tasarım">✳ Tasarım</button>
+        <button class="chip" data-cat="Müzik">♫ Müzik</button>
+        <button class="chip" data-cat="Kişisel gelişim">✦ Kişisel gelişim</button>
+        <button class="chip" data-cat="Diğer">＋ Diğer</button>
+      </div>
+
+      <div class="results-meta">
+        <span id="count">Paylaşımlar yükleniyor…</span>
+        <span>● Topluluğa açık</span>
+      </div>
+      <div id="cards" class="cards"></div>
+
+      <div id="empty" class="empty hidden">
+        <div class="empty-icon">⌕</div>
+        <h3 id="empty-title">Henüz paylaşım bulunamadı</h3>
+        <p id="empty-text">İlk beceriyi sen paylaşabilirsin.</p>
+        <button id="reset" class="btn btn-outline">Filtreleri temizle</button>
+      </div>
+      <p id="notice" class="notice">Gerçek paylaşımlar Supabase üzerinden yüklenir.</p>
+    </section>
+
+    <section id="nasil" class="how-section">
+      <div class="eyebrow">BASİT. SAMİMİ. BİRLİKTE.</div>
+      <h2>Paylaşmak için uzman olman gerekmez.</h2>
+      <div class="steps">
+        <article class="step">
+          <span class="step-number">01</span><div class="step-icon">✳</div>
+          <h3>Becerini ekle</h3>
+          <p>İyi olduğun ya da deneyim kazandığın bir alanı paylaş.</p>
+        </article>
+        <article class="step">
+          <span class="step-number">02</span><div class="step-icon">⌕</div>
+          <h3>İnsanları keşfet</h3>
+          <p>İlgi alanına uygun kişileri ve öğrenme fırsatlarını bul.</p>
+        </article>
+        <article class="step">
+          <span class="step-number">03</span><div class="step-icon">↗</div>
+          <h3>İletişime geç</h3>
+          <p>Bir beceri paylaşım isteği göndererek birlikte öğrenmeye başla.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#"><span class="brand-icon">b.</span> birlikte<span class="brand-muted">bul</span></a>
+    <span>Beceriler paylaştıkça çoğalır.</span>
+    <span>© <span id="year"></span> BirlikteBul</span>
+  </footer>
+
+  <div id="auth-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="backdrop" data-close="auth-modal"></div>
+    <section class="modal-panel">
+      <button class="close-btn" data-close="auth-modal" aria-label="Kapat">×</button>
+      <span class="brand-icon modal-logo">b.</span>
+      <div class="eyebrow">TOPLULUĞA KATIL</div>
+      <h2 id="auth-title">Birlikte öğrenmeye hazır mısın?</h2>
+      <div class="tabs">
+        <button id="tab-login">Giriş yap</button>
+        <button id="tab-signup" class="selected">Hesap oluştur</button>
+      </div>
+      <form id="auth-form">
+        <label>E-posta
+          <input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="sen@ornek.com">
+        </label>
+        <label>Şifre
+          <input id="password" type="password" autocomplete="current-password" required minlength="8" maxlength="72" placeholder="En az 8 karakter">
+        </label>
+        <label id="name-wrap">Görünen ad
+          <input id="display-name" type="text" maxlength="40" autocomplete="nickname" placeholder="Sana nasıl hitap edelim?">
+        </label>
+        <button id="auth-submit" class="btn btn-primary btn-full">Hesap oluştur ↗</button>
+        <p id="auth-msg" class="form-message" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+
+  <div id="offer-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="offer-title-heading">
+    <div class="backdrop" data-close="offer-modal"></div>
+    <section class="modal-panel">
+      <button class="close-btn" data-close="offer-modal" aria-label="Kapat">×</button>
+      <div class="eyebrow">BİLDİKLERİNİ PAYLAŞ</div>
+      <h2 id="offer-title-heading">Becerini toplulukla paylaş.</h2>
+      <form id="offer-form">
+        <label>Beceri başlığı
+          <input id="offer-title" maxlength="70" minlength="3" required placeholder="Örn. Başlangıç seviyesi Python">
+        </label>
+        <label>Kategori
+          <select id="offer-cat" required>
+            <option value="">Kategori seç</option>
+            <option>Yazılım</option><option>Dil</option><option>Tasarım</option>
+            <option>Müzik</option><option>Kişisel gelişim</option><option>Diğer</option>
+          </select>
+        </label>
+        <label>Açıklama
+          <textarea id="offer-desc" maxlength="500" minlength="10" rows="4" required placeholder="Neler öğretebilirsin?"></textarea>
+        </label>
+        <label>Şehir (isteğe bağlı)
+          <input id="offer-city" maxlength="60" placeholder="Örn. İstanbul">
+        </label>
+        <button id="offer-submit" class="btn btn-primary btn-full">Beceriyi yayınla ↗</button>
+        <p id="offer-msg" class="form-message" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+
+  <div id="profile-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Beceri ayrıntısı">
+    <div class="backdrop" data-close="profile-modal"></div>
+    <section class="modal-panel">
+      <button class="close-btn" data-close="profile-modal" aria-label="Kapat">×</button>
+      <div id="profile-detail"></div>
+    </section>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
