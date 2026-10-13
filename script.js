@@ -16,7 +16,7 @@ const supabaseConfigured =
   !SUPABASE_KEY.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU");
 
 const db = supabaseConfigured
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  ? window.supabase.createClient(gjjiomuxwkzgkvjxencd,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
