@@ -6,14 +6,14 @@
    service_role / secret key'i asla buraya koyma.
 ========================================================= */
 
-const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
-const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+const SUPABASE_URL = "https://gjjiomuxwkzgkvjxencd.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU";
 const AVATAR_BUCKET = "avatars";
 
 const supabaseConfigured =
   SUPABASE_URL.startsWith("https://") &&
-  !SUPABASE_URL.includes("YOUR_PROJECT_ID") &&
-  !SUPABASE_KEY.includes("YOUR_SUPABASE");
+  !SUPABASE_URL.includes("gjjiomuxwkzgkvjxencd") &&
+  !SUPABASE_KEY.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU");
 
 const db = supabaseConfigured
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
