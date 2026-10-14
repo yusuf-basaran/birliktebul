@@ -8,7 +8,7 @@
   <meta name="description" content="BirlikteBul — Bilgini paylaş, yeni beceriler öğren.">
   <title>BirlikteBul | Bilgi Paylaşım Platformu</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -88,7 +88,7 @@
 
       <div class="results-meta">
         <h3>Öne çıkan beceriler</h3>
-        <span id="resultCount">İlanlar yükleniyor...</span>
+        <div><span id="resultCount" aria-live="polite">İlanlar yükleniyor...</span> <button class="btn btn-outline" id="retrySkillsBtn">Yenile</button></div>
       </div>
       <div id="skillsGrid" class="skills-grid">
         <div class="empty-state">Beceriler yükleniyor...</div>
@@ -250,5 +250,19 @@
   </div>
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
+  <div class="modal hidden" id="requestModal" role="dialog" aria-modal="true" aria-labelledby="requestTitle">
+    <div class="modal-card">
+      <button class="modal-close" data-close="requestModal" aria-label="Kapat">×</button>
+      <span class="eyebrow">BİRLİKTE ÖĞREN</span>
+      <h2 id="requestTitle">Öğrenme talebi gönder</h2>
+      <p class="muted" id="requestSkillTitle"></p>
+      <form id="requestForm" class="form-stack">
+        <label>İlan sahibine mesajın<textarea id="requestMessage" rows="5" maxlength="1000" placeholder="Ne öğrenmek istediğini ve sana nasıl ulaşılabileceğini paylaşabilirsin."></textarea></label>
+        <p class="form-hint">Mesajı yalnızca sen ve ilan sahibi görebilir. En fazla 1000 karakter.</p>
+        <button type="submit" class="btn btn-primary btn-full">Talebi gönder</button>
+      </form>
+    </div>
+  </div>
+  <noscript><p class="empty-state">BirlikteBul'u kullanmak için tarayıcında JavaScript'i etkinleştir.</p></noscript>
 </body>
 </html>

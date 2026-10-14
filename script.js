@@ -11,12 +11,12 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const AVATAR_BUCKET = "avatars";
 
 const supabaseConfigured =
-  SUPABASE_URL.startsWith("https://") &&
-  !SUPABASE_URL.includes("gjjiomuxwkzgkvjxencd") &&
-  !SUPABASE_KEY.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU");
+  /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(SUPABASE_URL) &&
+  (SUPABASE_KEY.startsWith("sb_publishable_") || SUPABASE_KEY.startsWith("eyJ")) &&
+  Boolean(window.supabase?.createClient);
 
 const db = supabaseConfigured
-  ? window.supabase.createClient(gjjiomuxwkzgkvjxencd,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU, {
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -36,7 +36,11 @@ const state = {
   requestTab: "incoming",
   authMode: "login",
   settingsTab: "profile",
-  editingSkill: null
+  editingSkill: null,
+  requests: [],
+  requestSkillId: null,
+  sessionVersion: 0,
+  requestVersion: 0
 };
 
 const placeholderAvatar =
@@ -81,7 +85,7 @@ function handleError(error, fallback = "İşlem tamamlanamadı.") {
 
 function requireDb() {
   if (!db) {
-    toast("Önce script.js içindeki Supabase URL ve anahtarını eklemelisin.", "error");
+    toast("Bağlantı başlatılamadı. Sayfayı yenileyip tekrar dene.", "error");
     return false;
   }
   return true;
@@ -96,20 +100,28 @@ function requireLogin() {
   return true;
 }
 
+const modalFocus = new Map();
+
 function openModal(id) {
   const modal = document.getElementById(id);
   if (modal) {
     modal.classList.remove("hidden");
+    modalFocus.set(id, document.activeElement);
     document.body.style.overflow = "hidden";
+    modal.querySelector("input:not([type=hidden]), textarea, button")?.focus();
   }
 }
 
 function closeModal(id) {
   document.getElementById(id)?.classList.add("hidden");
   if (!$(".modal:not(.hidden)")) document.body.style.overflow = "";
+  const previous = modalFocus.get(id);
+  if (previous?.isConnected) previous.focus();
+  modalFocus.delete(id);
 }
 
 function openAuth(mode = "login") {
+  $$(".modal:not(.hidden)").forEach(modal => closeModal(modal.id));
   setAuthMode(mode);
   openModal("authModal");
 }
@@ -132,6 +144,7 @@ function setAuthMode(mode) {
 }
 
 function showPage(page) {
+  if (page !== "home" && !requireLogin()) return;
   const pageMap = {
     home: "homePage",
     skills: "skillsPage",
@@ -208,9 +221,15 @@ function renderProfile() {
 }
 
 function renderLoggedOut() {
+  state.sessionVersion++;
+  state.requestVersion++;
   state.user = null;
   state.profile = null;
   state.mySkills = [];
+  state.requests = [];
+  state.requestSkillId = null;
+  $$(".modal:not(.hidden)").forEach(modal => closeModal(modal.id));
+  ["#profileForm", "#emailForm", "#passwordForm", "#skillForm", "#authForm", "#requestForm"].forEach(id => $(id).reset());
 
   $("#profileMenu").classList.add("hidden");
   $("#loginBtn").classList.remove("hidden");
@@ -222,7 +241,7 @@ function renderLoggedOut() {
     showPage("home");
   }
 
-  renderSkills([]);
+  renderSkills(state.skills);
   $("#mySkillsGrid").innerHTML =
     '<div class="empty-state">İlanlarını görmek için giriş yap.</div>';
   $("#dashboardSkills").innerHTML =
@@ -233,31 +252,35 @@ function renderLoggedOut() {
 
 async function loadProfile() {
   if (!state.user) return;
+  const user = state.user;
+  const version = state.sessionVersion;
 
   const { data, error } = await db
     .from("profiles")
     .select("id, display_name, city, bio, avatar_url")
-    .eq("id", state.user.id)
+    .eq("id", user.id)
     .maybeSingle();
 
   if (error) throw error;
+  if (version !== state.sessionVersion || state.user?.id !== user.id) return;
 
   if (data) {
     state.profile = data;
   } else {
-    const fallbackName = state.user.user_metadata?.display_name ||
-      state.user.email?.split("@")[0] || "Kullanıcı";
+    const fallbackName = (user.user_metadata?.display_name ||
+      user.email?.split("@")[0] || "Kullanıcı").trim().slice(0, 60) || "Kullanıcı";
 
     const { data: created, error: createError } = await db
       .from("profiles")
       .upsert({
-        id: state.user.id,
+        id: user.id,
         display_name: fallbackName
       })
       .select()
       .single();
 
     if (createError) throw createError;
+    if (version !== state.sessionVersion || state.user?.id !== user.id) return;
     state.profile = created;
   }
 
@@ -280,6 +303,7 @@ async function loadSkills() {
 
   if (error) {
     handleError(error, "Beceriler yüklenemedi.");
+    $("#resultCount").textContent = "İlanlar yüklenemedi";
     $("#skillsGrid").innerHTML =
       '<div class="empty-state">İlanlar yüklenemedi. Veritabanı kurulumunu kontrol et.</div>';
     return;
@@ -308,7 +332,7 @@ function renderSkills(skills) {
 
   if (!filtered.length) {
     $("#skillsGrid").innerHTML =
-      '<div class="empty-state">Bu aramayla eşleşen ilan bulunamadı. Başka bir kelime deneyebilirsin.</div>';
+      `<div class="empty-state">${query || category ? "Bu aramayla eşleşen ilan bulunamadı. Başka bir kelime deneyebilirsin." : "Henüz bir beceri paylaşılmadı. İlk ilanı sen ekleyebilirsin."}</div>`;
     return;
   }
 
@@ -343,11 +367,13 @@ function renderSkills(skills) {
 
 async function loadMySkills() {
   if (!state.user || !requireDb()) return;
+  const userId = state.user.id;
+  const version = state.sessionVersion;
 
   const { data, error } = await db
     .from("skill_offers")
-    .select("id, title, category, city, description, created_at")
-    .eq("user_id", state.user.id)
+    .select("id, user_id, title, category, city, description, created_at")
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -355,6 +381,7 @@ async function loadMySkills() {
     return;
   }
 
+  if (version !== state.sessionVersion || state.user?.id !== userId) return;
   state.mySkills = data || [];
   const markup = state.mySkills.length
     ? state.mySkills.map(skill => `
@@ -419,13 +446,14 @@ async function saveSkill(event) {
   };
 
   try {
+    if (!payload.title || !payload.description) throw new Error("Başlık ve açıklama boş olamaz.");
     let result;
 
     if (skillId) {
       result = await db.from("skill_offers")
         .update(payload)
         .eq("id", skillId)
-        .eq("user_id", state.user.id);
+        .eq("user_id", state.user.id).select("id").single();
     } else {
       result = await db.from("skill_offers").insert(payload);
     }
@@ -497,7 +525,7 @@ function openSkillDetail(id) {
   openModal("detailModal");
 }
 
-async function requestSkill(id) {
+function requestSkill(id) {
   if (!requireLogin() || !requireDb()) return;
 
   const skill = state.skills.find(item => item.id === id) ||
@@ -513,31 +541,44 @@ async function requestSkill(id) {
     return;
   }
 
-  const message = window.prompt(
-    "İlan sahibine iletmek istediğin kısa mesaj (isteğe bağlı):",
-    "Merhaba, paylaştığın beceriyi öğrenmek istiyorum."
-  );
-  if (message === null) return;
-
-  const { error } = await db.from("skill_requests").insert({
-    offer_id: id,
-    requester_id: state.user.id,
-    message: message.trim() || null,
-    status: "pending"
-  });
-
-  if (error) {
-    if (error.code === "23505") {
-      toast("Bu ilan için daha önce talep göndermişsin.", "error");
-    } else {
-      handleError(error, "Talep gönderilemedi.");
-    }
-    return;
-  }
-
+  state.requestSkillId = id;
+  $("#requestSkillTitle").textContent = skill.title;
+  $("#requestMessage").value = "Merhaba, paylaştığın beceriyi öğrenmek istiyorum.";
   closeModal("detailModal");
-  toast("Öğrenme talebin gönderildi.");
-  if (!$("#requestsPage").classList.contains("hidden")) loadRequests();
+  openModal("requestModal");
+}
+
+async function submitRequest(event) {
+  event.preventDefault();
+  if (!requireLogin() || !requireDb() || !state.requestSkillId) return;
+  const button = event.submitter || $("#requestForm button[type=submit]");
+  const message = $("#requestMessage").value.trim();
+  if (message.length > 1000) return toast("Mesaj en fazla 1000 karakter olabilir.", "error");
+  setBusy(button, true, "Gönderiliyor...");
+  try {
+    const { error } = await db.from("skill_requests").insert({
+      offer_id: state.requestSkillId,
+      requester_id: state.user.id,
+      message: message || null,
+      status: "pending"
+    });
+    if (error) {
+      if (error.code === "23505") {
+        toast("Bu ilan için daha önce talep göndermişsin.", "error");
+      } else {
+        handleError(error, "Talep gönderilemedi.");
+      }
+      return;
+    }
+    closeModal("requestModal");
+    state.requestSkillId = null;
+    toast("Öğrenme talebin gönderildi.");
+    if (!$("#requestsPage").classList.contains("hidden")) await loadRequests();
+  } catch (error) {
+    handleError(error, "Talep gönderilemedi.");
+  } finally {
+    setBusy(button, false);
+  }
 }
 
 function statusLabel(status) {
@@ -552,6 +593,8 @@ function statusLabel(status) {
 
 async function loadRequests() {
   if (!requireLogin() || !requireDb()) return;
+  const userId = state.user.id;
+  const version = ++state.requestVersion;
 
   $("#requestsList").innerHTML =
     '<div class="empty-state">Talepler yükleniyor...</div>';
@@ -559,17 +602,18 @@ async function loadRequests() {
   const incoming = state.requestTab === "incoming";
   let query = db.from("skill_requests").select(`
     id, offer_id, requester_id, message, status, created_at,
-    skill_offers!skill_requests_offer_id_fkey(id, title, user_id),
+    skill_offers!skill_requests_offer_id_fkey!inner(id, title, user_id),
     requester:profiles!skill_requests_requester_id_fkey(id, display_name, city, avatar_url)
   `);
 
   if (incoming) {
-    query = query.eq("skill_offers.user_id", state.user.id);
+    query = query.eq("skill_offers.user_id", userId);
   } else {
-    query = query.eq("requester_id", state.user.id);
+    query = query.eq("requester_id", userId);
   }
 
   const { data, error } = await query.order("created_at", { ascending: false });
+  if (version !== state.requestVersion || state.user?.id !== userId) return;
 
   if (error) {
     handleError(error, "Talepler yüklenemedi.");
@@ -579,6 +623,7 @@ async function loadRequests() {
   }
 
   const requests = data || [];
+  state.requests = requests;
   if (!requests.length) {
     $("#requestsList").innerHTML =
       `<div class="empty-state">${incoming ? "Henüz gelen talebin yok." : "Henüz bir öğrenme talebi göndermedin."}</div>`;
@@ -605,26 +650,34 @@ async function loadRequests() {
           <div class="request-actions">
             <button class="btn btn-primary" data-request-status="${escapeHTML(request.id)}" data-status="accepted">Kabul et</button>
             <button class="btn btn-outline" data-request-status="${escapeHTML(request.id)}" data-status="declined">Reddet</button>
-          </div>` : ""}
+          </div>` : (!incoming && request.status === "pending" ? `
+          <div class="request-actions"><button class="btn btn-outline" data-request-status="${escapeHTML(request.id)}" data-status="cancelled">Talebi iptal et</button></div>` : "")}
       </article>`;
   }).join("");
 }
 
 async function updateRequestStatus(id, status) {
   if (!requireLogin() || !requireDb()) return;
-  if (!["accepted", "declined"].includes(status)) return;
+  if (!["accepted", "declined", "cancelled"].includes(status)) return;
+  const request = state.requests.find(item => item.id === id);
+  if (!request || request.status !== "pending") return;
+  if (status === "cancelled" ? request.requester_id !== state.user.id : request.skill_offers?.user_id !== state.user.id) return;
 
-  const { error } = await db.from("skill_requests")
-    .update({ status })
-    .eq("id", id);
-
-  if (error) {
+  const buttons = $$(`[data-request-status="${id}"]`);
+  if (buttons.some(button => button.disabled)) return;
+  buttons.forEach(button => setBusy(button, true));
+  try {
+    const { error } = await db.from("skill_requests")
+      .update({ status })
+      .eq("id", id).eq("status", "pending").select("id").single();
+    if (error) throw error;
+    toast(status === "accepted" ? "Talep kabul edildi." : status === "cancelled" ? "Talep iptal edildi." : "Talep reddedildi.");
+    await loadRequests();
+  } catch (error) {
     handleError(error, "Talep durumu güncellenemedi.");
-    return;
+  } finally {
+    buttons.forEach(button => setBusy(button, false));
   }
-
-  toast(status === "accepted" ? "Talep kabul edildi." : "Talep reddedildi.");
-  await loadRequests();
 }
 
 async function saveProfile(event) {
@@ -642,6 +695,7 @@ async function saveProfile(event) {
   };
 
   try {
+    if (!payload.display_name) throw new Error("Görünen ad boş olamaz.");
     const { data, error } = await db.from("profiles")
       .upsert(payload, { onConflict: "id" })
       .select()
@@ -808,6 +862,7 @@ async function handleAuthSubmit(event) {
   try {
     if (state.authMode === "signup") {
       const display_name = $("#authName").value.trim();
+      if (!display_name) throw new Error("Görünen ad boş olamaz.");
       const { data, error } = await db.auth.signUp({
         email,
         password,
@@ -836,6 +891,7 @@ async function handleAuthSubmit(event) {
       toast("Başarıyla giriş yaptın.");
       await Promise.all([loadSkills(), loadMySkills()]);
     }
+    $("#authForm").reset();
   } catch (error) {
     handleError(error, "Giriş veya kayıt işlemi başarısız.");
   } finally {
@@ -896,6 +952,15 @@ function bindEvents() {
     if (event.key === "Escape") {
       $$(".modal:not(.hidden)").forEach(modal => closeModal(modal.id));
     }
+    if (event.key === "Tab") {
+      const modal = $(".modal:not(.hidden)");
+      if (!modal) return;
+      const nodes = [...modal.querySelectorAll('button, input:not([type=hidden]), textarea, select, [tabindex="0"]')]
+        .filter(node => !node.disabled && node.getClientRects().length);
+      const first = nodes[0], last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    }
   });
 
   $$("[data-auth-mode]").forEach(button => {
@@ -923,6 +988,8 @@ function bindEvents() {
   $("#passwordForm").addEventListener("submit", changePassword);
   $("#avatarInput").addEventListener("change", uploadAvatar);
   $("#skillForm").addEventListener("submit", saveSkill);
+  $("#requestForm").addEventListener("submit", submitRequest);
+  $("#retrySkillsBtn").addEventListener("click", loadSkills);
 
   $("#searchInput").addEventListener("input", () => renderSkills(state.skills));
   $("#categoryFilter").addEventListener("change", () => renderSkills(state.skills));
@@ -962,8 +1029,38 @@ async function initialize() {
     return;
   }
 
-  const { data: { session } } = await db.auth.getSession();
-  if (session?.user) {
+  // Register before getSession so recovery events from email links are not missed.
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === "INITIAL_SESSION") return;
+    if (event === "TOKEN_REFRESHED" && session?.user.id === state.user?.id) {
+      state.user = session.user;
+      return;
+    }
+    const version = ++state.sessionVersion;
+    window.setTimeout(async () => {
+      if (version !== state.sessionVersion) return;
+      if (event === "SIGNED_OUT") { renderLoggedOut(); return; }
+      if (!session?.user) return;
+      state.user = session.user;
+      try {
+        await loadProfile();
+        if (version !== state.sessionVersion) return;
+        if (event === "PASSWORD_RECOVERY") {
+          closeModal("authModal");
+          showPage("profile");
+          showSettingsTab("security");
+          $("#newPassword").focus();
+          toast("Yeni şifreni belirleyip kaydet.");
+        }
+        renderSkills(state.skills);
+      } catch (error) { handleError(error, "Oturum bilgileri güncellenemedi."); }
+    }, 0);
+  });
+
+  const initialVersion = state.sessionVersion;
+  const { data: { session }, error } = await db.auth.getSession();
+  if (error) handleError(error, "Oturum alınamadı.");
+  if (session?.user && initialVersion === state.sessionVersion) {
     state.user = session.user;
     try {
       await loadProfile();
@@ -974,25 +1071,10 @@ async function initialize() {
 
   await loadSkills();
 
-  db.auth.onAuthStateChange((event, session) => {
-    // Supabase oturum olaylarında ağır işlemleri callback dışında çalıştır.
-    window.setTimeout(async () => {
-      if (session?.user) {
-        state.user = session.user;
-        try {
-          await loadProfile();
-          await loadSkills();
-        } catch (error) {
-          handleError(error, "Oturum bilgileri güncellenemedi.");
-        }
-      } else if (event === "SIGNED_OUT") {
-        renderLoggedOut();
-      } else if (event === "PASSWORD_RECOVERY") {
-        openAuth("login");
-        toast("Yeni şifreni hesap ayarlarından belirleyebilirsin.");
-      }
-    }, 0);
-  });
 }
 
-document.addEventListener("DOMContentLoaded", initialize);
+document.addEventListener("DOMContentLoaded", () => initialize().catch(error => {
+  handleError(error, "Uygulama başlatılamadı. Tekrar dene.");
+  $("#resultCount").textContent = "Bağlantı kurulamadı";
+  $("#skillsGrid").innerHTML = '<div class="empty-state">Bağlantı kurulamadı. İlanları yenilemeyi deneyebilirsin.</div>';
+}));
