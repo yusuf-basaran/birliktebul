@@ -1,10 +1,5 @@
 
-/* =========================================================
-   BİRLİKTEBUL — UYGULAMA KODU
-   Supabase Dashboard > Project Settings > API
-   URL ve Publishable/anon key değerlerini buraya ekle.
-   service_role / secret key'i asla buraya koyma.
-========================================================= */
+// Supabase bağlantısı. Tarayıcıda yalnızca public anahtar kullanılır.
 
 const SUPABASE_URL = "https://gjjiomuxwkzgkvjxencd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqamlvbXV4d2t6Z2t2anhlbmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2MjA4ODcsImV4cCI6MjEwNzE5Njg4N30.sgL8ZFeeNk5ggSPAA8n7LKqykbxH8JPq1UxEm4HlvwU";
@@ -305,7 +300,7 @@ async function loadSkills() {
     handleError(error, "Beceriler yüklenemedi.");
     $("#resultCount").textContent = "İlanlar yüklenemedi";
     $("#skillsGrid").innerHTML =
-      '<div class="empty-state">İlanlar yüklenemedi. Veritabanı kurulumunu kontrol et.</div>';
+      '<div class="empty-state">İlanlar yüklenemedi. Yenile düğmesiyle tekrar deneyebilirsin.</div>';
     return;
   }
 
@@ -618,7 +613,7 @@ async function loadRequests() {
   if (error) {
     handleError(error, "Talepler yüklenemedi.");
     $("#requestsList").innerHTML =
-      '<div class="empty-state">Talepler yüklenemedi. Veritabanı politikalarını kontrol et.</div>';
+      '<div class="empty-state">Talepler yüklenemedi. Biraz sonra tekrar dene.</div>';
     return;
   }
 
@@ -770,7 +765,7 @@ async function uploadAvatar(event) {
 
     toast("Profil fotoğrafın güncellendi.");
   } catch (error) {
-    handleError(error, "Fotoğraf yüklenemedi. Storage ayarlarını kontrol et.");
+    handleError(error, "Fotoğraf yüklenemedi. Tekrar dene.");
   }
 }
 
@@ -1025,11 +1020,11 @@ async function initialize() {
 
   if (!requireDb()) {
     $("#skillsGrid").innerHTML =
-      '<div class="empty-state">Kurulum tamamlanmadı. script.js içine Supabase URL ve anahtarını ekle.</div>';
+      '<div class="empty-state">Bağlantı kurulamadı. Sayfayı yenileyip tekrar dene.</div>';
     return;
   }
 
-  // Register before getSession so recovery events from email links are not missed.
+  // Şifre kurtarma olayını kaçırmamak için oturum sorgusundan önce dinle.
   db.auth.onAuthStateChange((event, session) => {
     if (event === "INITIAL_SESSION") return;
     if (event === "TOKEN_REFRESHED" && session?.user.id === state.user?.id) {
