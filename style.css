@@ -151,6 +151,12 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .detail-owner { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
 .detail-owner img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
 .detail-description { white-space: pre-line; overflow-wrap: anywhere; }
+:focus-visible { outline: 3px solid #88c29b; outline-offset: 3px; }
+.request-card p { white-space: pre-line; }
+.compact-item > div, .request-card > div { min-width: 0; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
 @media (max-width: 950px) {
   .topbar { flex-wrap: wrap; gap: 12px; }
   .main-nav { order: 3; width: 100%; overflow-x: auto; }
