@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#174f3b">
-  <meta name="description" content="BirlikteBul — Bilgini paylaş, yeni beceriler öğren.">
+  <meta name="description" content="Beceri ilanlarını keşfet, öğrenme talebi gönder veya kendi becerini paylaş.">
   <title>BirlikteBul | Bilgi Paylaşım Platformu</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" defer></script>
@@ -20,7 +20,7 @@
 
     <nav class="main-nav" aria-label="Ana menü">
       <button class="nav-link active" data-page="home">Keşfet</button>
-      <button class="nav-link" data-page="skills">Beceri ilanları</button>
+      <button class="nav-link" data-page="skills">İlanlarım</button>
       <button class="nav-link" data-page="requests">Öğrenme talepleri</button>
     </nav>
 
@@ -38,34 +38,30 @@
   <main>
     <section class="hero" id="heroSection">
       <div class="hero-copy">
-        <span class="eyebrow">BİLGİNİ PAYLAŞ · BİRLİKTE GELİŞ</span>
-        <h1>Öğrenmenin en güzel yolu <span>birlikte.</span></h1>
-        <p>Bildiklerini paylaş, yeni beceriler keşfet ve seninle aynı ilgi alanlarına sahip insanlarla tanış.</p>
+        <span class="eyebrow">BECERİ PAYLAŞIMI</span>
+        <h1>Bildiğini paylaş.<br><span>Yeni bir beceri öğren.</span></h1>
+        <p>Öğrenmek istediğin konuda bir ilan bul, ilan sahibine talep gönder. Öğretebileceğin bir konu varsa kendi ilanını ekle.</p>
         <div class="hero-actions">
           <button class="btn btn-primary btn-large" id="heroExplore">Becerileri keşfet <span>→</span></button>
           <button class="btn btn-outline btn-large" id="heroAddSkill">Bir beceri paylaş</button>
         </div>
-        <div class="hero-note"><span class="dot"></span> Bilgi paylaşımıyla büyüyen bir topluluk</div>
+        <p class="hero-note">İlanlara göz atmak için hesap açmana gerek yok.</p>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="art-circle circle-one"></div>
-        <div class="art-circle circle-two"></div>
-        <div class="art-card art-card-main">
-          <div class="art-emoji">✦</div>
-          <strong>Birlikte öğren</strong>
-          <span>Her beceri yeni bir başlangıç.</span>
-        </div>
-        <div class="art-card art-card-small art-card-top">🎨 <span>Tasarım</span></div>
-        <div class="art-card art-card-small art-card-bottom">💻 <span>Yazılım</span></div>
-      </div>
+      <aside class="hero-guide" aria-label="Nasıl kullanılır">
+        <h2>Nasıl kullanılır?</h2>
+        <ol>
+          <li><strong>İlanlara göz at</strong><p>Konuyu veya şehri ara, kategori seç.</p></li>
+          <li><strong>Öğrenme talebi gönder</strong><p>İlan sahibine ne öğrenmek istediğini yaz.</p></li>
+          <li><strong>Talebini takip et</strong><p>Kabul veya ret durumunu hesabından gör.</p></li>
+        </ol>
+      </aside>
     </section>
 
     <section class="page-section" id="homePage">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">TOPLULUĞU KEŞFET</span>
-          <h2>Yeni bir şey öğren</h2>
-          <p>İlgini çeken bir beceri bul ve paylaşım yapan kişilerle tanış.</p>
+          <h2>Beceri ilanları</h2>
+          <p>Öğrenmek istediğin konuyu veya bulunduğun şehri ara.</p>
         </div>
         <button class="btn btn-primary" id="addSkillBtn">＋ Beceri ekle</button>
       </div>
@@ -87,7 +83,7 @@
       </div>
 
       <div class="results-meta">
-        <h3>Öne çıkan beceriler</h3>
+        <h3>İlanlar</h3>
         <div><span id="resultCount" aria-live="polite">İlanlar yükleniyor...</span> <button class="btn btn-outline" id="retrySkillsBtn">Yenile</button></div>
       </div>
       <div id="skillsGrid" class="skills-grid">
@@ -97,7 +93,7 @@
 
     <section class="page-section hidden" id="skillsPage">
       <div class="section-heading">
-        <div><span class="eyebrow">SENİN PAYLAŞIMLARIN</span><h2>Beceri ilanlarım</h2><p>Paylaştığın becerileri burada yönetebilirsin.</p></div>
+        <div><h2>Beceri ilanlarım</h2><p>İlanlarını düzenle veya yeni bir ilan ekle.</p></div>
         <button class="btn btn-primary" id="myAddSkillBtn">＋ Yeni ilan</button>
       </div>
       <div id="mySkillsGrid" class="skills-grid"></div>
@@ -105,7 +101,7 @@
 
     <section class="page-section hidden" id="requestsPage">
       <div class="section-heading">
-        <div><span class="eyebrow">BİRLİKTE GELİŞ</span><h2>Öğrenme talepleri</h2><p>Gelen talepleri yönet, gönderdiklerinin durumunu takip et.</p></div>
+        <div><h2>Öğrenme talepleri</h2><p>Gelen talepleri yönet, gönderdiklerinin durumunu takip et.</p></div>
       </div>
       <div class="request-tabs">
         <button class="tab-button active" data-request-tab="incoming">Gelen talepler</button>
@@ -116,7 +112,7 @@
 
     <section class="page-section hidden" id="profilePage">
       <div class="section-heading">
-        <div><span class="eyebrow">KİŞİSEL ALANIN</span><h2>Hesabım</h2><p>Profilini ve hesap ayarlarını tek yerden yönet.</p></div>
+        <div><h2>Hesabım</h2><p>Profil bilgilerini ve hesap ayarlarını güncelle.</p></div>
       </div>
 
       <div class="dashboard-layout">
@@ -126,11 +122,11 @@
             <strong id="sidebarName">Kullanıcı</strong>
             <span id="sidebarEmail" class="muted"></span>
           </div>
-          <button class="dashboard-link active" data-settings-tab="profile">◉　Kişisel bilgiler</button>
-          <button class="dashboard-link" data-settings-tab="security">♧　E-posta ve şifre</button>
-          <button class="dashboard-link" data-settings-tab="my-skills">▤　Beceri ilanlarım</button>
-          <button class="dashboard-link" data-settings-tab="my-requests">↗　Öğrenme taleplerim</button>
-          <button class="dashboard-link danger-text" id="logoutBtn">↪　Çıkış yap</button>
+          <button class="dashboard-link active" data-settings-tab="profile">Kişisel bilgiler</button>
+          <button class="dashboard-link" data-settings-tab="security">E-posta ve şifre</button>
+          <button class="dashboard-link" data-settings-tab="my-skills">Beceri ilanlarım</button>
+          <button class="dashboard-link" data-settings-tab="my-requests">Öğrenme taleplerim</button>
+          <button class="dashboard-link danger-text" id="logoutBtn">Çıkış yap</button>
         </aside>
 
         <div class="dashboard-content">
@@ -194,14 +190,13 @@
 
   <footer class="footer">
     <a class="brand" href="#" data-page="home"><span class="brand-icon">B</span><span>birlikte<span class="brand-light">bul</span></span></a>
-    <p>Bilgini paylaş, birlikte büyü.</p>
+    <p>Beceri paylaşımı ve birlikte öğrenme.</p>
     <span>© <span id="year"></span> BirlikteBul</span>
   </footer>
 
   <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <div class="modal-card">
       <button class="modal-close" data-close="authModal" aria-label="Kapat">×</button>
-      <span class="eyebrow">BİRLİKTEBUL TOPLULUĞU</span>
       <h2 id="authTitle">Tekrar hoş geldin</h2>
       <p class="muted" id="authDescription">Hesabına giriş yap ve öğrenmeye devam et.</p>
       <div class="auth-switch">
@@ -221,7 +216,6 @@
   <div class="modal hidden" id="skillModal" role="dialog" aria-modal="true" aria-labelledby="skillModalTitle">
     <div class="modal-card modal-wide">
       <button class="modal-close" data-close="skillModal" aria-label="Kapat">×</button>
-      <span class="eyebrow">BECERİ PAYLAŞIMI</span>
       <h2 id="skillModalTitle">Yeni beceri ilanı</h2>
       <p class="muted">Neyi paylaşmak istediğini anlat.</p>
       <form id="skillForm" class="form-stack">
@@ -253,7 +247,6 @@
   <div class="modal hidden" id="requestModal" role="dialog" aria-modal="true" aria-labelledby="requestTitle">
     <div class="modal-card">
       <button class="modal-close" data-close="requestModal" aria-label="Kapat">×</button>
-      <span class="eyebrow">BİRLİKTE ÖĞREN</span>
       <h2 id="requestTitle">Öğrenme talebi gönder</h2>
       <p class="muted" id="requestSkillTitle"></p>
       <form id="requestForm" class="form-stack">
