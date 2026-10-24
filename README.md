@@ -2,6 +2,26 @@
 
 BirlikteBul, beceri paylaşmak ve yeni bir konu öğrenmek isteyen kişileri buluşturan bir web uygulamasıdır. Kullanıcılar ilan oluşturabilir, ilan sahibine öğrenme talebi gönderebilir ve taleplerini hesaplarından takip edebilir.
 
+<!-- project-overview:start -->
+## Projeye genel bakış
+
+![BirlikteBul proje özellikleri: Hesap ve oturum, Kişisel profil, Beceri ilanları, Konu ve şehir araması, Öğrenme talepleri, Mobil kullanım](docs/images/project-overview.png)
+
+[Görseli büyük aç](docs/images/project-overview.png) · [SVG kaynağı](docs/images/project-overview.svg)
+
+<details>
+<summary>Görseldeki özellikler ve ilgili kaynaklar</summary>
+
+- **[Hesap ve oturum](script.js)** — E-posta ile kayıt, giriş ve şifre sıfırlama.
+- **[Kişisel profil](index.html)** — Profil bilgileri, fotoğraf ve hesap ayarları.
+- **[Beceri ilanları](script.js)** — İlan oluşturma, düzenleme ve silme.
+- **[Konu ve şehir araması](index.html)** — Konu, şehir ve kategoriye göre filtreleme.
+- **[Öğrenme talepleri](harden_requests.sql)** — Talep gönderme, kabul, ret ve iptal akışı.
+- **[Mobil kullanım](style.css)** — Telefon ve bilgisayara uyumlu sayfa düzeni.
+
+</details>
+<!-- project-overview:end -->
+
 ## Özellikler
 
 - E-posta ile kayıt, giriş ve şifre sıfırlama
